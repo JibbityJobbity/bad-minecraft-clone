@@ -1,0 +1,3 @@
+# If on Windows, put libglfw3 in this directory
+*
+!.gitignore
