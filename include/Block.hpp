@@ -5,8 +5,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 #define TEXTURE_PATH "textures/"
 
@@ -16,8 +14,6 @@ struct Block
         unsigned int texture;
 };
 
-void LoadBlocks();
-
-static std::vector<Block> Blocks;
+void LoadBlocks(std::vector<Block>* Blocks);
 
 #endif

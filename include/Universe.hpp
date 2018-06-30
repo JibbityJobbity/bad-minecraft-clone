@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <Shader.hpp>
 #include <Camera.hpp>
-#include <Block.h>
+#include <Block.hpp>
 
 #define WIDTH_DEFAULT 800
 #define HEIGHT_DEFAULT 600
@@ -25,6 +25,7 @@ public:
 private:
     unsigned int VAO;
     vector<vector<int>> map;
+    vector<Block> BlockDictionary;
     float cube[180] = {
         -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
         0.5f, -0.5f, -0.5f,  0.0f, 0.0f,

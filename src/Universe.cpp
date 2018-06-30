@@ -42,7 +42,7 @@ int Universe::Setup()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	LoadBlocks();
+	LoadBlocks(&BlockDictionary);
 
 	camera = new Camera(WIDTH_DEFAULT, HEIGHT_DEFAULT);
     	shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
@@ -57,16 +57,16 @@ void Universe::EventLoop()
 		// Clear framebuffer
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		// Use shader
 		shader->use();
 		//shader->setMat4("transform", glm::mat4(1.0f));
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
-
+		// Render block
 		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D, Blocks[0].texture);
+		glBindTexture(GL_TEXTURE_2D, BlockDictionary[0].texture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+		// Update GLFW
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
