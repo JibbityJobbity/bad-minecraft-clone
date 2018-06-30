@@ -1,0 +1,1 @@
+ -LC:/Users/JibbityJobbity/Documents/GitHub/bad-minecraft-clone/lib -lglfw3 -lX11 -lGL -lpthread -ldl -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

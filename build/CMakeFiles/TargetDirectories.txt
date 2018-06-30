@@ -1,0 +1,3 @@
+C:/Users/JibbityJobbity/Documents/GitHub/bad-minecraft-clone/build/CMakeFiles/BadMinecraftClone.dir
+C:/Users/JibbityJobbity/Documents/GitHub/bad-minecraft-clone/build/CMakeFiles/edit_cache.dir
+C:/Users/JibbityJobbity/Documents/GitHub/bad-minecraft-clone/build/CMakeFiles/rebuild_cache.dir
