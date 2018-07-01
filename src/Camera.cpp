@@ -55,16 +55,18 @@ void Camera::MoveUp(float distance, bool relativeToWorld)
 
 void Camera::RotateYaw(float amount)
 {
+    float modifiedAmount = amount * LookSensitivity;
     if (up.y > 0.0f)
-        Yaw += glm::radians(amount);
+        Yaw += glm::radians(modifiedAmount);
     else if (up.y < 0.0f)
-        Yaw -= glm::radians(amount);
+        Yaw -= glm::radians(modifiedAmount);
     SetTarget();
 }
 
 void Camera::RotatePitch(float amount)
 {
-    Pitch -= glm::radians(amount);
+    float modifiedAmount = amount * LookSensitivity;
+    Pitch -= glm::radians(modifiedAmount);
     SetTarget();
 }
 

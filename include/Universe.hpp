@@ -20,10 +20,16 @@ public:
     void EventLoop();
     void Cleanup();
     void ResizeCallback(GLFWwindow* window, int width, int height);
+    void MouseCallback(GLFWwindow* window, double xPos, double yPos);
     GLFWwindow* window;
     Shader* shader;
     Camera* camera;
 private:
+    void MoveCharacter();
+    float oldTime;
+    float oldXpos;
+    float oldYpos;
+    bool firstFrame = true;
     unsigned int VAO;
     vector<vector<int>> map;
     vector<Block> BlockDictionary;

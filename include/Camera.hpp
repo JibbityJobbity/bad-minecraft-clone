@@ -24,6 +24,7 @@ public:
     float Yaw = 0.0f;
     float Pitch = 0.0f;
     float Fov = 75.0f;
+    float LookSensitivity = 5.0f;
     bool ThirdPerson = false;
 private:
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);

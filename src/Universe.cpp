@@ -10,6 +10,14 @@ void Resize_Callback(GLFWwindow* window, int width, int height)
 	}
 }
 
+void Mouse_Callback(GLFWwindow* window, double xPos, double yPos)
+{
+	if (universe_pointer)
+	{
+		universe_pointer->MouseCallback(window, xPos, yPos);
+	}
+}
+
 int Universe::Setup()
 {
 	universe_pointer = this;
@@ -29,6 +37,8 @@ int Universe::Setup()
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, Resize_Callback);
+	glfwSetCursorPosCallback(window, Mouse_Callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -66,6 +76,8 @@ void Universe::EventLoop()
 {
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
+		glfwPollEvents();
+		MoveCharacter();
 		// Clear framebuffer
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,7 +92,6 @@ void Universe::EventLoop()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// Update GLFW
 		glfwSwapBuffers(window);
-		glfwPollEvents();
 	}
 }
 
@@ -93,4 +104,46 @@ void Universe::ResizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 	camera->SetProjection(width, height, camera->Fov);
+}
+
+void Universe::MouseCallback(GLFWwindow* window, double xPos, double yPos)
+{
+	float xDistance, yDistance;
+	xDistance = xPos - oldXpos;
+	yDistance = yPos - oldYpos;
+	oldXpos = xPos;
+	oldYpos = yPos;
+	if (firstFrame)
+	{
+		firstFrame = false;
+	}
+		
+	else
+	{
+		camera->RotateYaw(xDistance);
+		camera->RotatePitch(yDistance);
+	}
+}
+
+void Universe::MoveCharacter()
+{
+	float deltaTime = oldTime - glfwGetTime();
+	oldTime = glfwGetTime();
+	float cameraSpeed = 5.0f;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera->MoveForward(cameraSpeed * deltaTime, false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera->MoveForward(-cameraSpeed * deltaTime, false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera->MoveAlong(cameraSpeed * deltaTime, false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera->MoveAlong(-cameraSpeed * deltaTime, false);
+	}
 }
