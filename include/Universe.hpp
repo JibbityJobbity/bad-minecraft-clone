@@ -19,6 +19,7 @@ public:
     int Setup();
     void EventLoop();
     void Cleanup();
+    void ResizeCallback(GLFWwindow* window, int width, int height);
     GLFWwindow* window;
     Shader* shader;
     Camera* camera;

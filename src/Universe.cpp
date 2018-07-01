@@ -1,7 +1,18 @@
 #include <Universe.hpp>
 
+Universe* universe_pointer = nullptr;
+
+void Resize_Callback(GLFWwindow* window, int width, int height)
+{
+	if (universe_pointer)
+	{
+		universe_pointer->ResizeCallback(window, width, height);
+	}
+}
+
 int Universe::Setup()
 {
+	universe_pointer = this;
 	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -17,6 +28,7 @@ int Universe::Setup()
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, Resize_Callback);
 
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -75,4 +87,10 @@ void Universe::EventLoop()
 void Universe::Cleanup()
 {
 
+}
+
+void Universe::ResizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+	camera->SetProjection(width, height, camera->Fov);
 }
