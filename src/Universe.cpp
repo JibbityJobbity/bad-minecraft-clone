@@ -39,6 +39,7 @@ int Universe::Setup()
 	glfwSetFramebufferSizeCallback(window, Resize_Callback);
 	glfwSetCursorPosCallback(window, Mouse_Callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -65,6 +66,7 @@ int Universe::Setup()
 	glEnableVertexAttribArray(1);
 
 	LoadBlocks(&BlockDictionary);
+	MakeMap();
 
 	camera = new Camera(WIDTH_DEFAULT, HEIGHT_DEFAULT);
     	shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
@@ -88,8 +90,23 @@ void Universe::EventLoop()
 		shader->setMat4("project", camera->Projection);
 		// Render block
 		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D, BlockDictionary[0].texture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < map.size(); i++)
+		{
+			Chunk currentChunk = map.at(i);
+			for (int j = 0; j < currentChunk.layers.size(); j++)
+			{
+				for (int k = 0; k < currentChunk.layers.at(j).size(); k++)
+				{
+					for (int l = 0; l < currentChunk.layers.at(j).at(k).size(); l++)
+					{
+						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k * 2, j * 2, l * 2));
+						shader->setMat4("transform", blockTransform);
+						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers.at(j).at(k).at(l)].texture);
+						glDrawArrays(GL_TRIANGLES, 0, 36);
+					}
+				}
+			}
+		}
 		// Update GLFW
 		glfwSwapBuffers(window);
 	}
@@ -146,4 +163,21 @@ void Universe::MoveCharacter()
 	{
 		camera->MoveAlong(-cameraSpeed * deltaTime, false);
 	}
+}
+
+void Universe::MakeMap()
+{
+	Chunk currentChunk;
+	std::array<std::array<int, 8>, 8> layer;
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			layer[i][j] = 0;
+		}
+	}
+	for (int i = 0; i < 32; i++)
+		currentChunk.layers.push_back(layer);
+
+	map.push_back(currentChunk);
 }

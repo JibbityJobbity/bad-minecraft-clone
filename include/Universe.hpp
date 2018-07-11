@@ -1,12 +1,14 @@
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
 #include <iostream>
+#include <array>
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Shader.hpp>
 #include <Camera.hpp>
 #include <Block.hpp>
+#include <Chunk.hpp>
 
 #define WIDTH_DEFAULT 800
 #define HEIGHT_DEFAULT 600
@@ -17,6 +19,7 @@ class Universe
 {
 public:
     int Setup();
+    void MakeMap();
     void EventLoop();
     void Cleanup();
     void ResizeCallback(GLFWwindow* window, int width, int height);
@@ -31,7 +34,7 @@ private:
     float oldYpos;
     bool firstFrame = true;
     unsigned int VAO;
-    vector<vector<int>> map;
+    vector<Chunk> map;
     vector<Block> BlockDictionary;
     float cube[180] = {
         -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,

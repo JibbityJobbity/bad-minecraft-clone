@@ -10,6 +10,6 @@ out vec2 TexCoord;
 void main()
 {
     TexCoord = aTexCoord;
-    //gl_Position = project * view * transform * vec4(aPos, 1.0f);
-    gl_Position = project * view * vec4(aPos, 1.0f);
+    gl_Position = project * view * transform * vec4(aPos, 1.0f);
+    //gl_Position = project * view * vec4(aPos, 1.0f);
 }
