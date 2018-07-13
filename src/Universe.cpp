@@ -51,6 +51,9 @@ int Universe::Setup()
 
 	glViewport(0, 0, WIDTH_DEFAULT, HEIGHT_DEFAULT);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 
 	// Vertex Buffers
 	unsigned int VBO;
@@ -76,16 +79,15 @@ int Universe::Setup()
 
 void Universe::EventLoop()
 {
+        float aniFiltering = 0.0f;
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
 		MoveCharacter();
 		// Clear framebuffer
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Use shader
 		shader->use();
-		//shader->setMat4("transform", glm::mat4(1.0f));
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
 		// Render block
@@ -95,13 +97,15 @@ void Universe::EventLoop()
 			Chunk currentChunk = map.at(i);
 			for (int j = 0; j < currentChunk.layers.size(); j++)
 			{
-				for (int k = 0; k < currentChunk.layers.at(j).size(); k++)
+				for (int k = 0; k < currentChunk.layers[j].size(); k++)
 				{
 					for (int l = 0; l < currentChunk.layers.at(j).at(k).size(); l++)
 					{
-						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k * 2, j * 2, l * 2));
+						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k + (currentChunk.xCoord * 16), j, l + (currentChunk.yCoord * 16)));
 						shader->setMat4("transform", blockTransform);
 						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers.at(j).at(k).at(l)].texture);
+                				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
+						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
 						glDrawArrays(GL_TRIANGLES, 0, 36);
 					}
 				}
@@ -109,6 +113,7 @@ void Universe::EventLoop()
 		}
 		// Update GLFW
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 }
 
@@ -146,7 +151,7 @@ void Universe::MoveCharacter()
 {
 	float deltaTime = oldTime - glfwGetTime();
 	oldTime = glfwGetTime();
-	float cameraSpeed = 5.0f;
+	float cameraSpeed = 15.0f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camera->MoveForward(cameraSpeed * deltaTime, false);
@@ -167,17 +172,35 @@ void Universe::MoveCharacter()
 
 void Universe::MakeMap()
 {
-	Chunk currentChunk;
-	std::array<std::array<int, 8>, 8> layer;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		for (int j = 0; j < 8; j++)
+		Chunk currentChunk;
+		std::array<std::array<int, 16>, 16> layer;
+		currentChunk.yCoord = i;
+		for (int j = 0; j < 1; j++)
 		{
-			layer[i][j] = 0;
+			currentChunk.xCoord = j;
+			currentChunk.layers.clear();
+			for (int k = 0; k < 1; k++)
+			{
+				for (int l = 0; l < 16; l++)
+				{
+					for (int m = 0; m < 16; m++)
+					{
+						layer[l][m] = 0;
+					}
+				}
+				currentChunk.layers.push_back(layer);
+			}
+			map.push_back(currentChunk);
 		}
 	}
-	for (int i = 0; i < 32; i++)
-		currentChunk.layers.push_back(layer);
+}
 
-	map.push_back(currentChunk);
+void Universe::FindBlock()
+{
+	for (int i = 0; i < map.size(); i++)
+	{
+
+	}
 }

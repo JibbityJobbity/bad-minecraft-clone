@@ -5,6 +5,7 @@
 
 void LoadBlocks(std::vector<Block>* Blocks)
 {
+        stbi_set_flip_vertically_on_load(true);
         int i = 0, width, height, nChannels;
         std::string temp_str = std::to_string(i);
         std::string texturePath = "textures/" + temp_str + ".png";

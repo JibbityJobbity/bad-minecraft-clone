@@ -3,10 +3,13 @@
 #include <vector>
 #include <Block.hpp>
 
-struct Chunk{
-        std::vector<std::array<std::array<int, 8>, 8>> layers;
+class Chunk{
+public:
+        void GenMesh();
+        std::vector<std::array<std::array<int, 16>, 16>> layers;
         int xCoord;
         int yCoord;
+        unsigned int Mesh;
 };
 
 #endif
