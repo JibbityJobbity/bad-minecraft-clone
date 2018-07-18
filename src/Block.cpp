@@ -3,7 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-void LoadBlocks(std::vector<Block>* Blocks)
+void LoadBlocks(std::vector<Block>* blocks)
 {
         stbi_set_flip_vertically_on_load(true);
         int i = 0, width, height, nChannels;
@@ -24,7 +24,7 @@ void LoadBlocks(std::vector<Block>* Blocks)
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
                 glGenerateMipmap(GL_TEXTURE_2D);
 
-                Blocks->push_back(currentBlock);
+                blocks->push_back(currentBlock);
 
                 stbi_image_free(texData);
                 i++;

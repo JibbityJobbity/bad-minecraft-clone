@@ -49,6 +49,7 @@ int Universe::Setup()
 		return -2;
 	}
 
+	// Enable culling
 	glViewport(0, 0, WIDTH_DEFAULT, HEIGHT_DEFAULT);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -80,36 +81,44 @@ int Universe::Setup()
 void Universe::EventLoop()
 {
         float aniFiltering = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
 		MoveCharacter();
 		// Clear framebuffer
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.1f, 0.5f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Use shader
 		shader->use();
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
-		// Render block
+		// Render each block. Planning on making a single mesh for each chunk.
 		glBindVertexArray(VAO);
 		for (int i = 0; i < map.size(); i++)
 		{
-			Chunk currentChunk = map.at(i);
+			Chunk currentChunk = map[i];
+			glm::mat4 chunkTransform = glm::translate(glm::mat4(1.0), glm::vec3(currentChunk.xCoord * 16, 0.0, currentChunk.yCoord * 16));
+			shader->setMat4("transform", chunkTransform);
+			glBindVertexArray(currentChunk.Mesh);
+			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
+			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
+			
+			/* Old rendering (per-block based)
 			for (int j = 0; j < currentChunk.layers.size(); j++)
 			{
 				for (int k = 0; k < currentChunk.layers[j].size(); k++)
 				{
-					for (int l = 0; l < currentChunk.layers.at(j).at(k).size(); l++)
+					for (int l = 0; l < currentChunk.layers[j][k].size(); l++)
 					{
 						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k + (currentChunk.xCoord * 16), j, l + (currentChunk.yCoord * 16)));
 						shader->setMat4("transform", blockTransform);
-						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers.at(j).at(k).at(l)].texture);
-                				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
+						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers[j][k][l]].texture);
+                				
 						glDrawArrays(GL_TRIANGLES, 0, 36);
 					}
 				}
-			}
+			} */
 		}
 		// Update GLFW
 		glfwSwapBuffers(window);
@@ -151,7 +160,11 @@ void Universe::MoveCharacter()
 {
 	float deltaTime = oldTime - glfwGetTime();
 	oldTime = glfwGetTime();
-	float cameraSpeed = 15.0f;
+	float cameraSpeed = 8.0f;
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		cameraSpeed = 16.0f;
+	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camera->MoveForward(cameraSpeed * deltaTime, false);
@@ -172,26 +185,28 @@ void Universe::MoveCharacter()
 
 void Universe::MakeMap()
 {
-	for (int i = 0; i < 1; i++)
+	Chunk currentChunk;
+	std::array<std::array<int, 16>, 16> layer;
+	for (int i = 0; i < 4; i++)
 	{
-		Chunk currentChunk;
-		std::array<std::array<int, 16>, 16> layer;
 		currentChunk.yCoord = i;
-		for (int j = 0; j < 1; j++)
+		for (int j = 0; j < 4; j++)
 		{
 			currentChunk.xCoord = j;
 			currentChunk.layers.clear();
-			for (int k = 0; k < 1; k++)
+			for (int k = 0; k < 16; k++)
 			{
-				for (int l = 0; l < 16; l++)
+				for (int l = 0; l < layer.size(); l++)
 				{
-					for (int m = 0; m < 16; m++)
+					for (int m = 0; m < layer.size(); m++)
 					{
 						layer[l][m] = 0;
 					}
 				}
-				currentChunk.layers.push_back(layer);
+				//for (int l = 0; l <= j + i; l++)
+					currentChunk.layers.push_back(layer);
 			}
+			currentChunk.GenMesh();
 			map.push_back(currentChunk);
 		}
 	}
@@ -199,8 +214,9 @@ void Universe::MakeMap()
 
 void Universe::FindBlock()
 {
+	Chunk* currentChunk;
 	for (int i = 0; i < map.size(); i++)
 	{
-
+		currentChunk = &map[i];
 	}
 }

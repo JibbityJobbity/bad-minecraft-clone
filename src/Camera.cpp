@@ -105,6 +105,10 @@ void Camera::SetTarget()
     target.y = sin(glm::radians(Pitch));
     target.z = cos(glm::radians(Pitch)) * sin(glm::radians(Yaw + 90));
     target = glm::normalize(target);
+    //up.x = cos(glm::radians(Pitch)) * cos(glm::radians(Yaw + 90));
+    //up.y = cos(glm::radians(Pitch));
+    //up.z = cos(glm::radians(Pitch)) * sin(glm::radians(Yaw + 90));
+    //up = glm::normalize(up);
     if (!ThirdPerson)
     {
         View = glm::lookAt(CameraPos, CameraPos + target, up);
