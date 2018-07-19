@@ -70,7 +70,11 @@ int Universe::Setup()
 	glEnableVertexAttribArray(1);
 
 	LoadBlocks(&BlockDictionary);
+	oldTime = glfwGetTime();
 	MakeMap();
+	float deltaTime = glfwGetTime() - oldTime;
+	std::cout << "Map generation in: " << deltaTime << std::endl;
+	
 
 	camera = new Camera(WIDTH_DEFAULT, HEIGHT_DEFAULT);
     	shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
@@ -93,13 +97,13 @@ void Universe::EventLoop()
 		shader->use();
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
-		// Render each block. Planning on making a single mesh for each chunk.
+		// Render each chunk
 		glBindVertexArray(VAO);
 		for (int i = 0; i < map.size(); i++)
 		{
 			Chunk currentChunk = map[i];
-			glm::mat4 chunkTransform = glm::translate(glm::mat4(1.0), glm::vec3(currentChunk.xCoord * 16, 0.0, currentChunk.yCoord * 16));
-			shader->setMat4("transform", chunkTransform);
+			//std::cout << currentChunk.chunkFaces.size() << std::endl;
+			shader->setMat4("transform", currentChunk.posMatrix);
 			glBindVertexArray(currentChunk.Mesh);
 			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
@@ -128,7 +132,8 @@ void Universe::EventLoop()
 
 void Universe::Cleanup()
 {
-
+	glfwDestroyWindow(window);
+	
 }
 
 void Universe::ResizeCallback(GLFWwindow* window, int width, int height)
@@ -186,7 +191,7 @@ void Universe::MoveCharacter()
 void Universe::MakeMap()
 {
 	Chunk currentChunk;
-	std::array<std::array<int, 16>, 16> layer;
+	std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE> layer;
 	for (int i = 0; i < 4; i++)
 	{
 		currentChunk.yCoord = i;
@@ -194,6 +199,7 @@ void Universe::MakeMap()
 		{
 			currentChunk.xCoord = j;
 			currentChunk.layers.clear();
+			currentChunk.chunkFaces.clear();
 			for (int k = 0; k < 16; k++)
 			{
 				for (int l = 0; l < layer.size(); l++)
@@ -206,6 +212,7 @@ void Universe::MakeMap()
 				//for (int l = 0; l <= j + i; l++)
 					currentChunk.layers.push_back(layer);
 			}
+			currentChunk.layers[1][1][1] = 1;
 			currentChunk.GenMesh();
 			map.push_back(currentChunk);
 		}

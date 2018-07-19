@@ -4,26 +4,24 @@ void Chunk::GenMesh()
 {
 	for (int y = 0; y < layers.size(); y++)
         {
-                std::array<std::array<int, 16>, 16> layer = layers.at(y);
-                for (int z = 0; z < layer.size(); z++)
+                for (int z = 0; z < CHUNK_SIZE; z++)
                 {
-                        for (int x = 0; x < layer[z].size(); x++)
+                        for (int x = 0; x < CHUNK_SIZE; x++)
                         {
                                 if (y < layers.size() - 1)
                                 {
-                                        if (layers[y + 1][x][z] != layer[x][z])
+                                        if (layers[y + 1][x][z] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[5][l] + x);
+                                                                chunkFaces.push_back(faces[UP_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[5][l] + y);
+                                                                chunkFaces.push_back(faces[UP_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[5][l] + z);
+                                                                chunkFaces.push_back(faces[UP_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[5][l]);
-                                                        
+                                                                chunkFaces.push_back(faces[UP_FACE][l]);
                                                 }
 
                                         }
@@ -31,154 +29,154 @@ void Chunk::GenMesh()
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[5][l] + x);
+                                                        chunkFaces.push_back(faces[UP_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[5][l] + y);
+                                                        chunkFaces.push_back(faces[UP_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[5][l] + z);
+                                                        chunkFaces.push_back(faces[UP_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[5][l]);
+                                                        chunkFaces.push_back(faces[UP_FACE][l]);
                                         }
                                 
                                 if (y > 0)
                                 {
-                                        if (layers[y - 1][x][z] != layer[x][z])
+                                        if (layers[y - 1][x][z] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[4][l] + x);
+                                                                chunkFaces.push_back(faces[DOWN_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[4][l] + y);
+                                                                chunkFaces.push_back(faces[DOWN_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[4][l] + z);
+                                                                chunkFaces.push_back(faces[DOWN_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[4][l]);
+                                                                chunkFaces.push_back(faces[DOWN_FACE][l]);
                                                 }
                                         }
                                 } else
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[4][l] + x);
+                                                        chunkFaces.push_back(faces[DOWN_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[4][l] + y);
+                                                        chunkFaces.push_back(faces[DOWN_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[4][l] + z);
+                                                        chunkFaces.push_back(faces[DOWN_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[4][l]);
-                                        }                    
-                                if (z < layer.size() - 1)
+                                                        chunkFaces.push_back(faces[DOWN_FACE][l]);
+                                        }
+                                if (z < CHUNK_SIZE - 1)
                                 {
-                                        if (layer[x][z + 1] != layer[x][z])
+                                        if (layers[y][x][z + 1] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[1][l] + x);
+                                                                chunkFaces.push_back(faces[BACK_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[1][l] + y);
+                                                                chunkFaces.push_back(faces[BACK_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[1][l] + z);
+                                                                chunkFaces.push_back(faces[BACK_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[1][l]);
+                                                                chunkFaces.push_back(faces[BACK_FACE][l]);
                                                 }
                                         }
                                 } else
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[1][l] + x);
+                                                        chunkFaces.push_back(faces[BACK_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[1][l] + y);
+                                                        chunkFaces.push_back(faces[BACK_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[1][l] + z);
+                                                        chunkFaces.push_back(faces[BACK_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[1][l]);
+                                                        chunkFaces.push_back(faces[BACK_FACE][l]);
                                         }
                                 if (z > 0)
                                 {
-                                        if (layer[x][z - 1] != layer[x][z])
+                                        if (layers[y][x][z - 1] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[0][l] + x);
+                                                                chunkFaces.push_back(faces[FRONT_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[0][l] + y);
+                                                                chunkFaces.push_back(faces[FRONT_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[0][l] + z);
+                                                                chunkFaces.push_back(faces[FRONT_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[0][l]);
+                                                                chunkFaces.push_back(faces[FRONT_FACE][l]);
                                                 }
                                         }
                                 } else
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[0][l] + x);
+                                                        chunkFaces.push_back(faces[FRONT_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[0][l] + y);
+                                                        chunkFaces.push_back(faces[FRONT_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[0][l] + z);
+                                                        chunkFaces.push_back(faces[FRONT_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[0][l]);
+                                                        chunkFaces.push_back(faces[FRONT_FACE][l]);
                                         }
-                                if (x < layer.size() - 1)
+                                if (x < CHUNK_SIZE - 1)
                                 {
-                                        if (layer[x + 1][z] != layer[x][z])
+                                        if (layers[y][x + 1][z] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[3][l] + x);
+                                                                chunkFaces.push_back(faces[LEFT_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[3][l] + y);
+                                                                chunkFaces.push_back(faces[LEFT_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[3][l] + z);
+                                                                chunkFaces.push_back(faces[LEFT_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[3][l]);
+                                                                chunkFaces.push_back(faces[LEFT_FACE][l]);
                                                 }
                                         }
                                 } else
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[3][l] + x);
+                                                        chunkFaces.push_back(faces[LEFT_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[3][l] + y);
+                                                        chunkFaces.push_back(faces[LEFT_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[3][l] + z);
+                                                        chunkFaces.push_back(faces[LEFT_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[3][l]);
+                                                        chunkFaces.push_back(faces[LEFT_FACE][l]);
                                         }
                                 if (x > 0)
                                 {
-                                        if (layer[x - 1][z] != layer[x][z])
+                                        if (layers[y][x - 1][z] != layers[y][x][z])
                                         {
                                                 for (int l = 0; l < 30; l++)
                                                 {
                                                         if ((l) % 5 == 0)
-                                                                chunkFaces.push_back(faces[2][l] + x);
+                                                                chunkFaces.push_back(faces[RIGHT_FACE][l] + x);
                                                         else if ((l - 1) % 5 == 0)
-                                                                chunkFaces.push_back(faces[2][l] + y);
+                                                                chunkFaces.push_back(faces[RIGHT_FACE][l] + y);
                                                         else if ((l - 2) % 5 == 0)
-                                                                chunkFaces.push_back(faces[2][l] + z);
+                                                                chunkFaces.push_back(faces[RIGHT_FACE][l] + z);
                                                         else
-                                                                chunkFaces.push_back(faces[2][l]);
+                                                                chunkFaces.push_back(faces[RIGHT_FACE][l]);
                                                 }
                                         }
                                 } else
                                         for (int l = 0; l < 30; l++)
                                         {
                                                 if ((l) % 5 == 0)
-                                                        chunkFaces.push_back(faces[2][l] + x);
+                                                        chunkFaces.push_back(faces[RIGHT_FACE][l] + x);
                                                 else if ((l - 1) % 5 == 0)
-                                                        chunkFaces.push_back(faces[2][l] + y);
+                                                        chunkFaces.push_back(faces[RIGHT_FACE][l] + y);
                                                 else if ((l - 2) % 5 == 0)
-                                                        chunkFaces.push_back(faces[2][l] + z);
+                                                        chunkFaces.push_back(faces[RIGHT_FACE][l] + z);
                                                 else
-                                                        chunkFaces.push_back(faces[2][l]);
+                                                        chunkFaces.push_back(faces[RIGHT_FACE][l]);
                                         }
                         }
                 }
@@ -193,4 +191,5 @@ void Chunk::GenMesh()
         glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+        posMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(xCoord * CHUNK_SIZE, 0, yCoord * CHUNK_SIZE));
 }

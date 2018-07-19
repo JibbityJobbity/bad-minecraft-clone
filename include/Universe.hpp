@@ -18,68 +18,68 @@ using namespace std;
 class Universe
 {
 public:
-    int Setup();
-    void MakeMap();
-    void EventLoop();
-    void Cleanup();
-    void ResizeCallback(GLFWwindow* window, int width, int height);
-    void MouseCallback(GLFWwindow* window, double xPos, double yPos);
-    GLFWwindow* window;
-    Shader* shader;
-    Camera* camera;
+	int Setup();
+	void MakeMap();
+	void EventLoop();
+	void Cleanup();
+	void ResizeCallback(GLFWwindow* window, int width, int height);
+	void MouseCallback(GLFWwindow* window, double xPos, double yPos);
+	GLFWwindow* window;
+	Shader* shader;
+	Camera* camera;
 private:
-    void MoveCharacter();
-    void FindBlock();
-    float oldTime;
-    float oldXpos;
-    float oldYpos;
-    bool firstFrame = true;
-    unsigned int VAO;
-    vector<Chunk> map;
-    vector<Block> BlockDictionary;
-    float cube[180] = {
-        0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-        1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-        0.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-        0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+	void MoveCharacter();
+	void FindBlock();
+	float oldTime;
+	float oldXpos;
+	float oldYpos;
+	bool firstFrame = true;
+	unsigned int VAO;
+	vector<Chunk> map;
+	vector<Block> BlockDictionary;
+	float cube[180] = {
+		0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+		1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+		1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+		0.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+		0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
 
-        1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-        0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-        1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-        0.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-        1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-        0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+		1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+		0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+		1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+		0.0f,  1.0f,  1.0f,  0.0f, 1.0f,
+		1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+		0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
-        0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-        0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-        0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+		0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+		0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+		0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+		0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+		0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
 
-        1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-        1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-        1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+		1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
+		1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+		1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+		1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
-        0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-        1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-        1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-        0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+		1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+		1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+		0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
 
-        1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-        0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-        1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-        0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-        1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-        0.0f,  1.0f,  1.0f,  0.0f, 0.0f
-    };
+		1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+		0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+		1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+		0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+		1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+		0.0f,  1.0f,  1.0f,  0.0f, 0.0f
+    	};
 };
 
 #endif
