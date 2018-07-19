@@ -18,7 +18,7 @@ void Mouse_Callback(GLFWwindow* window, double xPos, double yPos)
 	}
 }
 
-int Universe::Setup()
+Universe::Universe(int *setupStatus)
 {
 	universe_pointer = this;
 	// Init GLFW
@@ -32,21 +32,23 @@ int Universe::Setup()
 	{
 		std::cout << "Failed to initialise GLFW";
 		glfwTerminate();
-		return -1;
+		*setupStatus = -1;
+		return;
 	}
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, Resize_Callback);
 	glfwSetCursorPosCallback(window, Mouse_Callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	
+
 
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialise GLAD" << std::endl;
 		glfwTerminate();
-		return -2;
+		*setupStatus = -2;
+		return;
 	}
 
 	// Enable culling
@@ -79,7 +81,7 @@ int Universe::Setup()
 	camera = new Camera(WIDTH_DEFAULT, HEIGHT_DEFAULT);
     	shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
 
-	return 0;
+	return;
 }
 
 void Universe::EventLoop()
@@ -107,7 +109,7 @@ void Universe::EventLoop()
 			glBindVertexArray(currentChunk.Mesh);
 			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
-			
+
 			/* Old rendering (per-block based)
 			for (int j = 0; j < currentChunk.layers.size(); j++)
 			{
@@ -118,7 +120,7 @@ void Universe::EventLoop()
 						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k + (currentChunk.xCoord * 16), j, l + (currentChunk.yCoord * 16)));
 						shader->setMat4("transform", blockTransform);
 						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers[j][k][l]].texture);
-                				
+
 						glDrawArrays(GL_TRIANGLES, 0, 36);
 					}
 				}
@@ -130,7 +132,7 @@ void Universe::EventLoop()
 	}
 }
 
-void Universe::Cleanup()
+Universe::~Universe()
 {
 	glfwDestroyWindow(window);
 	
@@ -153,7 +155,7 @@ void Universe::MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	{
 		firstFrame = false;
 	}
-		
+
 	else
 	{
 		camera->RotateYaw(xDistance);
