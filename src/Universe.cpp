@@ -80,7 +80,7 @@ Universe::Universe(int *setupStatus)
 	return;
 }
 
-Universe::~Universe()
+void Universe::EventLoop()
 {
         float aniFiltering = 0.0f;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
@@ -128,7 +128,7 @@ Universe::~Universe()
 	}
 }
 
-void Universe::Cleanup()
+Universe::~Universe()
 {
 
 }

@@ -19,9 +19,9 @@ class Universe
 {
 public:
     Universe(int*);
+    ~Universe();
     void MakeMap();
     void EventLoop();
-    void Cleanup();
     void ResizeCallback(GLFWwindow* window, int width, int height);
     void MouseCallback(GLFWwindow* window, double xPos, double yPos);
     GLFWwindow* window;
