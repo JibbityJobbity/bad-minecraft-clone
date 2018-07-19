@@ -218,6 +218,7 @@ void Universe::MakeMap()
 			currentChunk.GenMesh();
 			map.push_back(currentChunk);
 		}
+		currentChunk = Chunk();
 	}
 }
 

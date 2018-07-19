@@ -18,7 +18,8 @@ using namespace std;
 class Universe
 {
 public:
-	int Setup();
+	Universe(int *setupStatus);
+	~Universe();
 	void MakeMap();
 	void EventLoop();
 	void Cleanup();
