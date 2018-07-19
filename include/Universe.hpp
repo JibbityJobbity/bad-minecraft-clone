@@ -18,10 +18,10 @@ using namespace std;
 class Universe
 {
 public:
-    int Setup();
+    Universe(int*);
+    ~Universe();
     void MakeMap();
     void EventLoop();
-    void Cleanup();
     void ResizeCallback(GLFWwindow* window, int width, int height);
     void MouseCallback(GLFWwindow* window, double xPos, double yPos);
     GLFWwindow* window;
