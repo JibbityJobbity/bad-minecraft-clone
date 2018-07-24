@@ -10,8 +10,12 @@
 #include <Block.hpp>
 #include <Chunk.hpp>
 
-#define WIDTH_DEFAULT 800
-#define HEIGHT_DEFAULT 600
+#define WIDTH_DEFAULT 1280
+#define HEIGHT_DEFAULT 720
+
+#define DISABLE_CULLING 0
+#define WIREFRAME 0
+#define NEW_RENDERING 1
 
 using namespace std;
 

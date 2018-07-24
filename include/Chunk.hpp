@@ -3,7 +3,6 @@
 #include <vector>
 #include <array>
 #include <iostream>
-#include <Block.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -18,58 +17,58 @@
 
 class Chunk{
 public:
-        void GenMesh();
-        std::vector<std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE>> layers;
-        int xCoord;
-        int yCoord;
-        unsigned int Mesh, VBO;
-        glm::mat4 posMatrix;
-        std::vector<float> chunkFaces;
-        float faces[6][30] = {
-                {
-                0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-                1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-                1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-                0.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-                0.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-                },{
-                1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-                0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-                1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-                0.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-                1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-                0.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-                },{
-                0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-                0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-                0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-                0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-                0.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-                },{
-                1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-                1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-                1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-                1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-                1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-                },{
-                0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-                1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-                1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-                0.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-                },{
-                1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-                0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-                1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-                0.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-                1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-                0.0f,  1.0f,  1.0f,  0.0f, 0.0f
-                }
-        };
+	void GenMesh(std::vector<Chunk>& map);
+	std::vector<std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE>> layers;
+	int xCoord;
+	int zCoord;
+	unsigned int Mesh, VBO;
+	glm::mat4 posMatrix;
+	std::vector<int> chunkFaces;
+	int faces[6][30] = {
+		{
+		0, 0, 0,  1, 0,
+		1, 0, 0,  0, 0,
+		1,  1, 0,  0, 1,
+		1,  1, 0,  0, 1,
+		0,  1, 0,  1, 1,
+		0, 0, 0,  1, 0,
+		},{
+		1, 0,  1,  1, 0,
+		0, 0,  1,  0, 0,
+		1,  1,  1,  1, 1,
+		0,  1,  1,  0, 1,
+		1,  1,  1,  1, 1,
+		0, 0,  1,  0, 0,
+		},{
+		0, 0, 0,  0, 0,
+		0,  1, 0,  0, 1,
+		0,  1,  1,  1, 1,
+		0, 0,  1,  1, 0,
+		0, 0, 0,  0, 0,
+		0,  1,  1,  1, 1,
+		},{
+		1, 0, 0,  1, 0,
+		1,  1,  1,  0, 1,
+		1,  1, 0,  1, 1,
+		1,  1,  1,  0, 1,
+		1, 0, 0,  1, 0,
+		1, 0,  1,  0, 0,
+		},{
+		0, 0, 0,  1, 1,
+		1, 0,  1,  0, 0,
+		1, 0, 0,  0, 1,
+		1, 0,  1,  0, 0,
+		0, 0, 0,  1, 1,
+		0, 0,  1,  1, 0,
+		},{
+		1,  1,  1,  1, 0,
+		0,  1, 0,  0, 1,
+		1,  1, 0,  1, 1,
+		0,  1, 0,  0, 1,
+		1,  1,  1,  1, 0,
+		0,  1,  1,  0, 0
+		}
+	};
 };
 
 #endif

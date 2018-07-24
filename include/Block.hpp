@@ -1,5 +1,6 @@
 #ifndef BLOCK_H
 #define BLOCK_H
+#include <Chunk.hpp>
 #include <glad/glad.h>
 #include <vector>
 #include <string>
@@ -10,10 +11,11 @@
 
 struct Block
 {
-        int ID;
-        unsigned int texture;
+	int ID = CHUNK_SIZE;
+	unsigned int texture;
 };
 
 void LoadBlocks(std::vector<Block>* Blocks);
+int FindBlock(int x, int y, int z, std::vector<Chunk>& map);
 
 #endif

@@ -26,6 +26,7 @@ Universe::Universe(int *setupStatus)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 8);
 
 	window = glfwCreateWindow(WIDTH_DEFAULT, HEIGHT_DEFAULT, "Game", NULL, NULL);
 	if (window == NULL)
@@ -51,12 +52,21 @@ Universe::Universe(int *setupStatus)
 		return;
 	}
 
-	// Enable culling
-	glViewport(0, 0, WIDTH_DEFAULT, HEIGHT_DEFAULT);
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
+	// Enable culling
+	#if DISABLE_CULLING== 1
+	#else
+	glViewport(0, 0, WIDTH_DEFAULT, HEIGHT_DEFAULT);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
+	#endif
+
+	// Wireframe
+	#if WIREFRAME
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	#endif
 
 	// Vertex Buffers
 	unsigned int VBO;
@@ -86,49 +96,71 @@ Universe::Universe(int *setupStatus)
 
 void Universe::EventLoop()
 {
+	// Anisotropic Filtering
         float aniFiltering = 0.0f;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
+
+	float debugOldTime = glfwGetTime();
+	glBindVertexArray(VAO);
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
+		float deltaTime;
 		MoveCharacter();
+		//deltaTime = glfwGetTime() - debugOldTime;
+		//std::cout << "Player position: " << deltaTime << std::endl;
 		// Clear framebuffer
 		glClearColor(0.0f, 0.1f, 0.5f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Use shader
+		//debugOldTime = glfwGetTime();
 		shader->use();
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
+		//deltaTime = glfwGetTime() - debugOldTime;
+		//std::cout << "Shader: " << deltaTime << std::endl;
+		//debugOldTime = glfwGetTime();
 		// Render each chunk
-		glBindVertexArray(VAO);
 		for (int i = 0; i < map.size(); i++)
 		{
 			Chunk currentChunk = map[i];
-			//std::cout << currentChunk.chunkFaces.size() << std::endl;
+
+			#if NEW_RENDERING
 			shader->setMat4("transform", currentChunk.posMatrix);
+			//deltaTime = glfwGetTime() - debugOldTime;
+			//std::cout << "Set Matrix: " << deltaTime << std::endl;
+			//debugOldTime = glfwGetTime();
 			glBindVertexArray(currentChunk.Mesh);
 			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
+			//deltaTime = glfwGetTime() - debugOldTime;
+			//std::cout << "Post-triangles: " << deltaTime << std::endl;
+			//debugOldTime = glfwGetTime();
 
-			/* Old rendering (per-block based)
+			#else
+			// Old rendering which renders every single block, should only be used for diagnostics or if you're insane
 			for (int j = 0; j < currentChunk.layers.size(); j++)
 			{
 				for (int k = 0; k < currentChunk.layers[j].size(); k++)
 				{
 					for (int l = 0; l < currentChunk.layers[j][k].size(); l++)
 					{
-						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k + (currentChunk.xCoord * 16), j, l + (currentChunk.yCoord * 16)));
+						glm::mat4 blockTransform = glm::translate(glm::mat4(1.0), glm::vec3(k + (currentChunk.xCoord * 16), j, l + (currentChunk.zCoord * 16)));
 						shader->setMat4("transform", blockTransform);
 						glBindTexture(GL_TEXTURE_2D, BlockDictionary[currentChunk.layers[j][k][l]].texture);
 
 						glDrawArrays(GL_TRIANGLES, 0, 36);
 					}
 				}
-			} */
+			}
+			#endif
 		}
+		//deltaTime = glfwGetTime() - debugOldTime;
+		//std::cout << "Chunks: " << deltaTime << std::endl;
 		// Update GLFW
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		//debugOldTime = glfwGetTime();
 	}
 }
 
@@ -188,38 +220,46 @@ void Universe::MoveCharacter()
 	{
 		camera->MoveAlong(-cameraSpeed * deltaTime, false);
 	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		camera->MoveUp(-cameraSpeed * deltaTime, true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	{
+		camera->MoveUp(cameraSpeed * deltaTime, true);
+	}
 }
 
 void Universe::MakeMap()
 {
-	Chunk currentChunk;
 	std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE> layer;
-	for (int i = 0; i < 4; i++)
+	//memset(&layer, 0, sizeof(layer));
+	for (int i = 0; i < 16; i++)
 	{
-		currentChunk.yCoord = i;
-		for (int j = 0; j < 4; j++)
+		for (int j = 0; j < 16; j++)
 		{
-			currentChunk.xCoord = j;
-			currentChunk.layers.clear();
-			currentChunk.chunkFaces.clear();
-			for (int k = 0; k < 16; k++)
+			map.push_back(Chunk());
+
+			map[map.size() - 1].zCoord = i;
+			map[map.size() - 1].xCoord = j;
+			for (int k = 0; k < 2; k++)
 			{
 				for (int l = 0; l < layer.size(); l++)
 				{
 					for (int m = 0; m < layer.size(); m++)
 					{
-						layer[l][m] = 0;
+						layer[l][m] = 1;
+						if (l == m && l == k && k == m)
+							layer[l][m] = 2;
 					}
 				}
 				//for (int l = 0; l <= j + i; l++)
-					currentChunk.layers.push_back(layer);
+					map[map.size() - 1].layers.push_back(layer);
 			}
-			currentChunk.layers[1][1][1] = 1;
-			currentChunk.GenMesh();
-			map.push_back(currentChunk);
 		}
-		currentChunk = Chunk();
 	}
+	for (int i = 0; i < map.size(); i++)
+		map[i].GenMesh(map);
 }
 
 void Universe::FindBlock()
