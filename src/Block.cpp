@@ -38,16 +38,21 @@ int FindBlock(int x, int y, int z, std::vector<Chunk>& map)
 {
 	int blockX = x % CHUNK_SIZE;
 	int blockZ = z % CHUNK_SIZE;
-	if (blockX == 1 && y == 0 && blockZ == 1)
+	int chunkX = x / CHUNK_SIZE;
+	int chunkZ = z / CHUNK_SIZE;
+	if (blockX < 0)
 	{
-		std::cout << "yeet ";
+		blockX += CHUNK_SIZE;
+		chunkX--;
 	}
-	else if (blockX == 1 && y == 1 && blockZ == 1){ 
-		std::cout << "yeeter ";
+	if (blockZ < 0)
+	{
+		blockZ += CHUNK_SIZE;
+		chunkZ--;
 	}
 	for (int i = 0; i < map.size(); i++)
 	{
-		if (map.at(i).xCoord == x / CHUNK_SIZE && map.at(i).zCoord == z / CHUNK_SIZE)
+		if (map.at(i).xCoord == chunkX && map.at(i).zCoord == chunkZ)
 		{
 			int returnID = map.at(i).layers[y][blockX][blockZ];
 			return returnID;

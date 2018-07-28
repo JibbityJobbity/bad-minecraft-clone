@@ -234,15 +234,15 @@ void Universe::MakeMap()
 {
 	std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE> layer;
 	//memset(&layer, 0, sizeof(layer));
-	for (int i = 0; i < 16; i++)
+	for (int i = -8; i < 8; i++)
 	{
-		for (int j = 0; j < 16; j++)
+		for (int j = -8; j < 8; j++)
 		{
 			map.push_back(Chunk());
 
 			map[map.size() - 1].zCoord = i;
 			map[map.size() - 1].xCoord = j;
-			for (int k = 0; k < 2; k++)
+			for (int k = 0; k < 16; k++)
 			{
 				for (int l = 0; l < layer.size(); l++)
 				{
@@ -250,7 +250,7 @@ void Universe::MakeMap()
 					{
 						layer[l][m] = 1;
 						if (l == m && l == k && k == m)
-							layer[l][m] = 2;
+							layer[l][m] = 0;
 					}
 				}
 				//for (int l = 0; l <= j + i; l++)
