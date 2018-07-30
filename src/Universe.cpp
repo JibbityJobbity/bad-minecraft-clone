@@ -145,6 +145,15 @@ void Universe::EventLoop()
 		// Update GLFW
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		if (glfwGetTime() - oldFrameTime > 5)
+		{
+			std::cout << frameCounter / 5.0f << " fps" << std::endl;
+			oldFrameTime = glfwGetTime();
+			frameCounter = 0;
+		}
+		else
+			frameCounter++;
 	}
 }
 

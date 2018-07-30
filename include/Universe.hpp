@@ -38,6 +38,8 @@ private:
 	float oldTime;
 	float oldXpos;
 	float oldYpos;
+	float oldFrameTime = 0.0f;
+	int frameCounter = 0;
 	bool firstFrame = true;
 	unsigned int VAO;
 	vector<Chunk> map;
