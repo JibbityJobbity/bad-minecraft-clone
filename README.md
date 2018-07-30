@@ -2,7 +2,16 @@
 - GNU/Linux
 
 CMake is required to generate build configurations.
-Please install GLFW from your distribution's repositories and run the following:
+Please install GLFW from your distribution's repositories.
+Ubuntu:
+```
+$ sudo apt install libglfw3-dev
+```
+Arch Linux (X11 only):
+```
+$ sudo pacman -S glfw-x11
+```
+Once you have it installed, run the following:
 ```
 $ mkdir build
 $ cd build

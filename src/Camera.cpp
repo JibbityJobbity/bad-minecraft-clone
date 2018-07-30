@@ -19,7 +19,8 @@ void Camera::MoveForward(float distance, bool relativeToWorld)
 	}
 	else
 	{
-		CameraPos -= target * distance;
+		CameraPos.x += sin(glm::radians(Yaw)) * distance;
+		CameraPos.z -= cos(glm::radians(Yaw)) * distance;
 	}
 
 	SetTarget();

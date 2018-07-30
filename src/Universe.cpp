@@ -101,14 +101,10 @@ void Universe::EventLoop()
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
 
-	float debugOldTime = glfwGetTime();
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
-		float deltaTime;
 		MoveCharacter();
-		//deltaTime = glfwGetTime() - debugOldTime;
-		//std::cout << "Player position: " << deltaTime << std::endl;
 		// Clear framebuffer
 		glClearColor(0.0f, 0.1f, 0.5f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -116,10 +112,6 @@ void Universe::EventLoop()
 		//debugOldTime = glfwGetTime();
 		shader->use();
 		shader->setMat4("view", camera->View);
-		shader->setMat4("project", camera->Projection);
-		//deltaTime = glfwGetTime() - debugOldTime;
-		//std::cout << "Shader: " << deltaTime << std::endl;
-		//debugOldTime = glfwGetTime();
 		// Render each chunk
 		for (int i = 0; i < map.size(); i++)
 		{
@@ -127,15 +119,9 @@ void Universe::EventLoop()
 
 			#if NEW_RENDERING
 			shader->setMat4("transform", currentChunk.posMatrix);
-			//deltaTime = glfwGetTime() - debugOldTime;
-			//std::cout << "Set Matrix: " << deltaTime << std::endl;
-			//debugOldTime = glfwGetTime();
 			glBindVertexArray(currentChunk.Mesh);
 			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
-			//deltaTime = glfwGetTime() - debugOldTime;
-			//std::cout << "Post-triangles: " << deltaTime << std::endl;
-			//debugOldTime = glfwGetTime();
 
 			#else
 			// Old rendering which renders every single block, should only be used for diagnostics or if you're insane
@@ -155,12 +141,9 @@ void Universe::EventLoop()
 			}
 			#endif
 		}
-		//deltaTime = glfwGetTime() - debugOldTime;
-		//std::cout << "Chunks: " << deltaTime << std::endl;
 		// Update GLFW
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		//debugOldTime = glfwGetTime();
 	}
 }
 
@@ -199,7 +182,7 @@ void Universe::MoveCharacter()
 {
 	float deltaTime = oldTime - glfwGetTime();
 	oldTime = glfwGetTime();
-	float cameraSpeed = 8.0f;
+	float cameraSpeed = 5.0f;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		cameraSpeed = 16.0f;
@@ -233,7 +216,6 @@ void Universe::MoveCharacter()
 void Universe::MakeMap()
 {
 	std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE> layer;
-	//memset(&layer, 0, sizeof(layer));
 	for (int i = -8; i < 8; i++)
 	{
 		for (int j = -8; j < 8; j++)
@@ -260,13 +242,4 @@ void Universe::MakeMap()
 	}
 	for (int i = 0; i < map.size(); i++)
 		map[i].GenMesh(map);
-}
-
-void Universe::FindBlock()
-{
-	Chunk* currentChunk;
-	for (int i = 0; i < map.size(); i++)
-	{
-		currentChunk = &map[i];
-	}
 }

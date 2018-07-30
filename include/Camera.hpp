@@ -17,7 +17,7 @@ public:
 	void RotatePitch(float degrees);
 	void SetTarget(float yaw, float pitch);
 	void SetTarget();
-	glm::vec3 CameraPos = glm::vec3(-3.0f, 16.0f, -3.0f);
+	glm::vec3 CameraPos = glm::vec3(0.0f, 17.75f, 0.0f);
 	glm::mat4 View = glm::mat4(1.0f);
 	glm::mat4 Projection;
 	float Yaw = 0.0f;
