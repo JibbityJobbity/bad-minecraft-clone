@@ -119,6 +119,7 @@ void Universe::EventLoop()
 
 			#if NEW_RENDERING
 			shader->setMat4("transform", currentChunk.posMatrix);
+			shader->setMat4("project", camera->Projection);
 			glBindVertexArray(currentChunk.Mesh);
 			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
