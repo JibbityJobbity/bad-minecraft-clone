@@ -62,10 +62,6 @@ Universe::Universe(int *setupStatus)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
-	// Anisotropic Filtering
-    float aniFiltering = 0.0f;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
 	#endif
 
 	// Wireframe
@@ -73,49 +69,27 @@ Universe::Universe(int *setupStatus)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	#endif
 
-	// Vertex Buffers
-	unsigned int VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
 
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
+	// Generate the map
 	LoadBlocks(&BlockDictionary);
 	oldTime = glfwGetTime();
 	MakeMap();
 	float deltaTime = glfwGetTime() - oldTime;
 	std::cout << "Map generation in: " << deltaTime << std::endl;
-	
 
+	// Anisotropic Filtering
+    float aniFiltering = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
+	
 	camera = new Camera(WIDTH_DEFAULT, HEIGHT_DEFAULT);
-    	shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
+    shader = new Shader("shaders/vertex.vs", "shaders/fragment.fs");
 
 	return;
 }
 
 void Universe::EventLoop()
 {
-	vector<float> theGigaFloat;
-	for (int i = 0; i = map.size(); i++)
-	{
-		for (int j = 0; j < map[i].chunkFaces.size(); i++)
-			theGigaFloat.push_back(map[i].chunkFaces[j]);
-	}
-	unsigned int newVAO, newVBO;
-	glGenVertexArrays(1, &newVAO);
-	glGenBuffers(1, &newVBO);glBindVertexArray(newVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, newVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(theGigaFloat.size()), &theGigaFloat, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
 		MoveCharacter();
@@ -123,20 +97,19 @@ void Universe::EventLoop()
 		glClearColor(0.0f, 0.1f, 0.5f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Use shader
-		//debugOldTime = glfwGetTime();
 		shader->use();
 		shader->setMat4("view", camera->View);
 		shader->setMat4("project", camera->Projection);
 		// Render each chunk
 		for (int i = 0; i < map.size(); i++)
 		{
-			Chunk currentChunk = map[i];
+			Chunk* currentChunk = &map[i];
 
 			#if NEW_RENDERING
-			shader->setMat4("transform", currentChunk.posMatrix);
-			//glBindVertexArray(currentChunk.Mesh);
-			//glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
-			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
+			shader->setMat4("transform", currentChunk->posMatrix);
+			glBindVertexArray(currentChunk->Mesh);
+			glBindBuffer(GL_ARRAY_BUFFER, currentChunk->VBO);
+			glDrawArrays(GL_TRIANGLES, 0, currentChunk->chunkFaces.size() / 5);
 
 			#else
 			// Old rendering which renders every single block, should only be used for diagnostics or if you're insane

@@ -15,7 +15,7 @@ void Chunk::GenMesh(std::vector<Chunk>& map)
 				{
 					if (y < layers.size() - 1) // If it's not the top layer
 					{
-						if (layers[y + 1][x][z] != layers[y][x][z])
+						if (layers[y + 1][x][z] == 0)
 						{
 							for (int l = 0; l < 30; l++)
 							{
