@@ -41,6 +41,7 @@ Universe::Universe(int *setupStatus)
 	glfwSetFramebufferSizeCallback(window, Resize_Callback);
 	glfwSetCursorPosCallback(window, Mouse_Callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSwapInterval(0);
 
 
 	// Init GLAD
@@ -61,6 +62,10 @@ Universe::Universe(int *setupStatus)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
+	// Anisotropic Filtering
+    float aniFiltering = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
 	#endif
 
 	// Wireframe
@@ -96,12 +101,21 @@ Universe::Universe(int *setupStatus)
 
 void Universe::EventLoop()
 {
-	// Anisotropic Filtering
-        float aniFiltering = 0.0f;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniFiltering);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, aniFiltering);
-
-	//glBindVertexArray(VAO);
+	vector<float> theGigaFloat;
+	for (int i = 0; i = map.size(); i++)
+	{
+		for (int j = 0; j < map[i].chunkFaces.size(); i++)
+			theGigaFloat.push_back(map[i].chunkFaces[j]);
+	}
+	unsigned int newVAO, newVBO;
+	glGenVertexArrays(1, &newVAO);
+	glGenBuffers(1, &newVBO);glBindVertexArray(newVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, newVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(theGigaFloat.size()), &theGigaFloat, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 	while (!glfwGetKey(window, GLFW_KEY_ESCAPE) && !glfwWindowShouldClose(window))
 	{
 		MoveCharacter();
@@ -112,6 +126,7 @@ void Universe::EventLoop()
 		//debugOldTime = glfwGetTime();
 		shader->use();
 		shader->setMat4("view", camera->View);
+		shader->setMat4("project", camera->Projection);
 		// Render each chunk
 		for (int i = 0; i < map.size(); i++)
 		{
@@ -119,9 +134,8 @@ void Universe::EventLoop()
 
 			#if NEW_RENDERING
 			shader->setMat4("transform", currentChunk.posMatrix);
-			shader->setMat4("project", camera->Projection);
-			glBindVertexArray(currentChunk.Mesh);
-			glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
+			//glBindVertexArray(currentChunk.Mesh);
+			//glBindBuffer(GL_ARRAY_BUFFER, currentChunk.VBO);
 			glDrawArrays(GL_TRIANGLES, 0, currentChunk.chunkFaces.size() / 5);
 
 			#else

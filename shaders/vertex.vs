@@ -11,5 +11,5 @@ void main()
 {
     TexCoord = aTexCoord;
     gl_Position = project * view * transform * vec4(aPos, 1.0f);
-    //gl_Position = project * view * vec4(aPos, 1.0f);
+    //gl_Position.y += sin(gl_Position.z / 10) * (gl_Position.x/2);
 }
